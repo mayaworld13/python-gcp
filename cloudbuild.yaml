@@ -17,16 +17,16 @@ steps:
       ]
 
   # Step 3: Deploy to Cloud Run
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: gcloud
-    args:
-      [
-        'run', 'deploy', 'mayaworld13',
-        '--image', 'us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA',
-        '--region', 'us-west1',
-        '--platform', 'managed',
-        '--allow-unauthenticated'
-      ]
+  # - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  #   entrypoint: gcloud
+  #   args:
+  #     [
+  #       'run', 'deploy', 'mayaworld13',
+  #       '--image', 'us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA',
+  #       '--region', 'us-west1',
+  #       '--platform', 'managed',
+  #       '--allow-unauthenticated'
+  #     ]
 
 images:
   - 'us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA'
