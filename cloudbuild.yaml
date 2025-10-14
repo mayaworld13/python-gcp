@@ -4,7 +4,7 @@ steps:
     args:
       [
         'build',
-        '-t', 'us-west1-docker.pkg.dev/$PROJECT_ID/python-gcp/mayaworld13:$COMMIT_SHA',
+        '-t', 'us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA',
         '.'
       ]
 
@@ -13,7 +13,7 @@ steps:
     args:
       [
         'push',
-        'us-west1-docker.pkg.dev/$PROJECT_ID/python-gcp/mayaworld13:$COMMIT_SHA'
+        'us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA'
       ]
 
   # Step 3: Deploy to Cloud Run
@@ -22,14 +22,14 @@ steps:
     args:
       [
         'run', 'deploy', 'mayaworld13',
-        '--image', 'us-west1-docker.pkg.dev/$PROJECT_ID/python-gcp/mayaworld13:$COMMIT_SHA',
+        '--image', 'us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA',
         '--region', 'us-west1',
         '--platform', 'managed',
         '--allow-unauthenticated'
       ]
 
 images:
-  - 'us-west1-docker.pkg.dev/$PROJECT_ID/python-gcp/mayaworld13:$COMMIT_SHA'
+  - 'us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA'
 
 # ✅ Fix for logging / service account error
 options:
