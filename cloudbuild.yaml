@@ -1,0 +1,36 @@
+steps:
+  # Step 1: Build Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'build',
+        '-t', 'us-west1-docker.pkg.dev/$PROJECT_ID/python-gcp/mayaworld13:$COMMIT_SHA',
+        '.'
+      ]
+
+  # Step 2: Push Docker image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'push',
+        'us-west1-docker.pkg.dev/$PROJECT_ID/python-gcp/mayaworld13:$COMMIT_SHA'
+      ]
+
+  # Step 3: Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      [
+        'run', 'deploy', 'mayaworld13',
+        '--image', 'us-west1-docker.pkg.dev/$PROJECT_ID/python-gcp/mayaworld13:$COMMIT_SHA',
+        '--region', 'us-west1',
+        '--platform', 'managed',
+        '--allow-unauthenticated'
+      ]
+
+images:
+  - 'us-west1-docker.pkg.dev/$PROJECT_ID/python-gcp/mayaworld13:$COMMIT_SHA'
+
+# ✅ Fix for logging / service account error
+options:
+  logging: CLOUD_LOGGING_ONLY
