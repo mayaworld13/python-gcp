@@ -1,0 +1,32 @@
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mayaworld13
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mayaworld13
+  template:
+    metadata:
+      labels:
+        app: mayaworld13
+    spec:
+      containers:
+      - name: mayaworld13
+        image: us-west1-docker.pkg.dev/PROJECT_ID/my-repo/mayaworld13:latest
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mayaworld13-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: mayaworld13
+  ports:
+  - port: 80
+    targetPort: 5000
