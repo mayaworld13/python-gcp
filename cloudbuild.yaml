@@ -28,22 +28,23 @@ steps:
         '--allow-unauthenticated',
         '--port', '5000'
       ]
-   - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/cloud-builders/gcloud'
     args:
       [
-        'container', 'clusters', 'get-credentials', 'autopilot-cluster-1',
-        '--region', 'us-west1',
-        '--project', '$PROJECT_ID'
+         'container', 'clusters', 'get-credentials', 'autopilot-cluster-1',
+         '--region', 'us-west1',
+         '--project', '$PROJECT_ID'
       ]
 
   # Step 4: Deploy to GKE
-  - name: 'gcr.io/cloud-builders/kubectl'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:latest'
+    entrypoint: 'bash'
     args:
-      [
-        'set', 'image', 'deployment/mayaworld13',
-        'mayaworld13=us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA',
-        '--namespace', 'default'
-      ]
+      - '-c'
+      - |
+        echo "Deploying app..."
+        kubectl apply -f deployment.yaml
+        
 
 images:
   - 'us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA'
