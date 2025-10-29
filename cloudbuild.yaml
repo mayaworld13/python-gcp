@@ -1,57 +1,88 @@
+# steps:
+#   # Step 1:  Build Docker image
+#   - name: 'gcr.io/cloud-builders/docker'
+#     args:
+#       [
+#         'build',
+#         '-t', 'us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA',
+#         '.'
+#       ]
+
+#   # Step 2: Push Docker image to Artifact Registry
+#   - name: 'gcr.io/cloud-builders/docker'
+#     args:
+#       [
+#         'push',
+#         'us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA'
+#       ]
+
+#   # Step 3: Deploy to Cloud Run
+#   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+#     entrypoint: gcloud
+#     args:
+#       [
+#         'run', 'deploy', 'mayaworld13',
+#         '--image', 'us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA',
+#         '--region', 'us-west1',
+#         '--platform', 'managed',
+#         '--allow-unauthenticated',
+#         '--port', '5000'
+#       ]
+#   - name: 'gcr.io/cloud-builders/gcloud'
+#     args:
+#       [
+#          'container', 'clusters', 'get-credentials', 'autopilot-cluster-1',
+#          '--region', 'us-west1',
+#          '--project', '$PROJECT_ID'
+#       ]
+
+#   # Step 4: Deploy to GKE
+#   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:latest'
+#     entrypoint: 'bash'
+#     args:
+#       - '-c'
+#       - |
+#         echo "Deploying app..."
+#         kubectl apply -f deployment.yaml
+#         echo "Updating image tag dynamically..."
+#         kubectl set image deployment/mayaworld13 \
+#           mayaworld13=us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA \
+#           --namespace=default
+
+# images:
+#   - 'us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA'
+
+# #  Fix for logging / service account error
+# options:
+#   logging: CLOUD_LOGGING_ONLY
+
+
+
 steps:
-  # Step 1:  Build Docker image
+  # 1️⃣ Build Docker image
   - name: 'gcr.io/cloud-builders/docker'
-    args:
-      [
-        'build',
-        '-t', 'us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA',
-        '.'
-      ]
+    args: ['build', '-t', 'us-west1-docker.pkg.dev/$PROJECT_ID/python-gcp/python-app:$SHORT_SHA', '.']
 
-  # Step 2: Push Docker image to Artifact Registry
+  # 2️⃣ Push image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args:
-      [
-        'push',
-        'us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA'
-      ]
+    args: ['push', 'us-west1-docker.pkg.dev/$PROJECT_ID/python-gcp/python-app:$SHORT_SHA']
 
-  # Step 3: Deploy to Cloud Run
+  # 3️⃣ Update image tag in deployment.yaml and push to GitHub
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: gcloud
+    entrypoint: bash
     args:
-      [
-        'run', 'deploy', 'mayaworld13',
-        '--image', 'us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA',
-        '--region', 'us-west1',
-        '--platform', 'managed',
-        '--allow-unauthenticated',
-        '--port', '5000'
-      ]
-  - name: 'gcr.io/cloud-builders/gcloud'
-    args:
-      [
-         'container', 'clusters', 'get-credentials', 'autopilot-cluster-1',
-         '--region', 'us-west1',
-         '--project', '$PROJECT_ID'
-      ]
-
-  # Step 4: Deploy to GKE
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:latest'
-    entrypoint: 'bash'
-    args:
-      - '-c'
+      - -c
       - |
-        echo "Deploying app..."
-        kubectl apply -f deployment.yaml
-        echo "Updating image tag dynamically..."
-        kubectl set image deployment/mayaworld13 \
-          mayaworld13=us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA \
-          --namespace=default
+        sed -i "s#image: .*#image: us-west1-docker.pkg.dev/$PROJECT_ID/python-gcp/python-app:$SHORT_SHA#g" k8s/deployment.yaml
+        git config --global user.email "cloudbuild@google.com"
+        git config --global user.name "Cloud Build"
+        git add k8s/deployment.yaml
+        git commit -m "Auto-update image tag to $SHORT_SHA"
+        git push https://<GITHUB_USERNAME>:$(gcloud secrets versions access latest --secret=GITHUB_TOKEN)@github.com/mayaworld13/python-gcp.git HEAD:main
 
 images:
-  - 'us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA'
+  - 'us-west1-docker.pkg.dev/$PROJECT_ID/python-gcp/python-app:$SHORT_SHA'
 
-#  Fix for logging / service account error
 options:
   logging: CLOUD_LOGGING_ONLY
+
