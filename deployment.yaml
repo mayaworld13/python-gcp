@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: mayaworld13
-        image: us-west1-docker.pkg.dev/testing-474407/my-repo/mayaworld13:a3d6e18
+        image: us-west1-docker.pkg.dev/testing-474407/my-repo/mayaworld13:945e925
         ports:
         - containerPort: 5000
 ---
