@@ -24,41 +24,124 @@
             animation: float 3s ease-in-out infinite;
         }
 
-        p {
-            font-size: 1.3em;
-            margin-top: 20px;
-            background: rgba(255,255,255,0.1);
-            padding: 15px 25px;
-            border-radius: 10px;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        <!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Flask Universe</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at top, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            text-align: center;
         }
 
-        @keyframes float {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0); }
-        }
+```
+    h1 {
+        font-size: 3.5em;
+        text-shadow: 0 0 20px rgba(255,255,255,0.8), 0 0 30px #00c6ff;
+        animation: float 3s ease-in-out infinite;
+    }
 
-        .planet {
-            position: absolute;
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #fff, #00c6ff);
-            box-shadow: 0 0 50px rgba(0, 198, 255, 0.6);
-            animation: spin 10s linear infinite;
-        }
+    p {
+        font-size: 1.4em;
+        margin-top: 20px;
+        padding: 15px 25px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        backdrop-filter: blur(10px);
+        animation: fadeIn 2s ease-in-out;
+    }
 
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-    </style>
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.8); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    .planet {
+        position: absolute;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%, #fff, #00c6ff);
+        box-shadow: 0 0 80px rgba(0, 198, 255, 0.6);
+        animation: spin 15s linear infinite;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .stars {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: white;
+        border-radius: 50%;
+        animation: twinkle 2s infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+        0%, 100% { opacity: 0.3; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.3); }
+    }
+
+    .btn {
+        margin-top: 35px;
+        padding: 15px 40px;
+        background: linear-gradient(45deg, #00c6ff, #007bff);
+        color: white;
+        font-size: 1.2em;
+        font-weight: bold;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        box-shadow: 0 0 25px rgba(0,123,255,0.8);
+        transition: all 0.4s ease;
+    }
+
+    .btn:hover {
+        background: linear-gradient(45deg, #007bff, #00c6ff);
+        box-shadow: 0 0 40px #00c6ff;
+        transform: scale(1.05);
+    }
+</style>
+```
+
 </head>
 <body>
     <div class="planet"></div>
-    <h1>🌌 Welcome to Flask Universe</h1>
-    <p>{{ message }}</p>
+    <!-- Twinkling stars -->
+    <div class="stars" style="top:10%; left:15%; animation-delay: 0.2s;"></div>
+    <div class="stars" style="top:30%; left:80%; animation-delay: 0.8s;"></div>
+    <div class="stars" style="top:60%; left:25%; animation-delay: 1.3s;"></div>
+    <div class="stars" style="top:75%; left:70%; animation-delay: 0.6s;"></div>
+    <div class="stars" style="top:50%; left:50%; animation-delay: 1.8s;"></div>
+
+```
+<h1>🌌 Welcome to Flask Universe</h1>
+<p>{{ message }}</p>
+
+<button class="btn" onclick="alert('✨ Exploring new galaxies with Flask!')">Explore 🌠</button>
+```
+
 </body>
 </html>
+
