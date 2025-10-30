@@ -3,36 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flask App 🚀</title>
+    <title>🚀 Flask Universe</title>
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #007bff, #00c6ff);
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
             color: white;
-            text-align: center;
-            padding-top: 100px;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-direction: column;
         }
+
         h1 {
             font-size: 3em;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            text-shadow: 2px 4px 8px rgba(0,0,0,0.3);
+            animation: float 3s ease-in-out infinite;
         }
+
         p {
-            font-size: 1.2em;
+            font-size: 1.3em;
             margin-top: 20px;
+            background: rgba(255,255,255,0.1);
+            padding: 15px 25px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-        .card {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 30px;
-            border-radius: 15px;
-            display: inline-block;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0); }
+        }
+
+        .planet {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #fff, #00c6ff);
+            box-shadow: 0 0 50px rgba(0, 198, 255, 0.6);
+            animation: spin 10s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>🚀 Welcome to My Flask App</h1>
-        <p>This Python app is running inside a Docker container.</p>
-    </div>
+    <div class="planet"></div>
+    <h1>🌌 Welcome to Flask Universe</h1>
+    <p>{{ message }}</p>
 </body>
 </html>
