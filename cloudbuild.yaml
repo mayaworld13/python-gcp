@@ -73,12 +73,25 @@ steps:
     args:
       - -c
       - |
+        echo "Updating image tag in values.yaml..."
+        sed -i "s#tag: .*#tag: \"$SHORT_SHA\"#g" flaskapp/values.yaml 
         sed -i "s#image: .*#image: us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$SHORT_SHA#g" deployment.yaml
+
         git config --global user.email "cloudbuild@google.com"
         git config --global user.name "Cloud Build"
-        git add deployment.yaml
-        git commit -m "Auto-update image tag to $SHORT_SHA"
+
+        git add helm/flaskapp/values.yaml deployment.yaml
+        git commit -m "Auto-update Helm image tag to $SHORT_SHA"
         git push https://mayaworld13:$(gcloud secrets versions access latest --secret=GITHUB_TOKEN)@github.com/mayaworld13/python-gcp.git HEAD:main
+    # args:
+    #   - -c
+    #   - |
+    #     sed -i "s#image: .*#image: us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$SHORT_SHA#g" deployment.yaml
+    #     git config --global user.email "cloudbuild@google.com"
+    #     git config --global user.name "Cloud Build"
+    #     git add deployment.yaml
+    #     git commit -m "Auto-update image tag to $SHORT_SHA"
+    #     git push https://mayaworld13:$(gcloud secrets versions access latest --secret=GITHUB_TOKEN)@github.com/mayaworld13/python-gcp.git HEAD:main
 
 images:
   - 'us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$SHORT_SHA'
