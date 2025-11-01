@@ -3,135 +3,171 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flask Universe Terminal</title>
+  <title>🌠 Flask Universe</title>
   <style>
-    /* -------- BASE -------- */
+    /* ==== Base Styles ==== */
     * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-      font-family: "Fira Code", monospace;
     }
 
     body {
-      background-color: #000;
-      color: #00ff99;
+      font-family: 'Poppins', sans-serif;
       height: 100vh;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      flex-direction: column;
+      text-align: center;
+      color: #fff;
+      background: radial-gradient(circle at top, #030014, #000);
       overflow: hidden;
     }
 
-    /* -------- TERMINAL CONTAINER -------- */
-    .terminal {
-      width: 80%;
-      max-width: 800px;
-      background: rgba(0, 0, 0, 0.85);
-      border: 2px solid #00ff99;
-      border-radius: 8px;
-      box-shadow: 0 0 25px rgba(0, 255, 153, 0.3);
-      padding: 30px;
-      position: relative;
-      animation: fadeIn 1s ease;
-    }
-
-    /* -------- TERMINAL HEADER -------- */
-    .terminal::before {
-      content: "Flask Universe Terminal";
+    /* ==== Animated Gradient Aurora ==== */
+    .aurora {
       position: absolute;
-      top: -28px;
-      left: 15px;
-      background: #00ff99;
-      color: #000;
-      padding: 3px 10px;
-      border-radius: 5px 5px 0 0;
-      font-weight: bold;
-      font-size: 0.8em;
-      letter-spacing: 1px;
+      width: 150%;
+      height: 150%;
+      background: linear-gradient(
+        120deg,
+        rgba(0, 255, 240, 0.15),
+        rgba(255, 0, 200, 0.1),
+        rgba(0, 150, 255, 0.15)
+      );
+      filter: blur(120px);
+      animation: auroraFlow 12s ease-in-out infinite alternate;
+      z-index: 0;
     }
 
-    /* -------- CONTENT -------- */
+    @keyframes auroraFlow {
+      0% {
+        transform: translate(-10%, -10%) rotate(0deg);
+      }
+      100% {
+        transform: translate(10%, 10%) rotate(360deg);
+      }
+    }
+
+    /* ==== Title ==== */
     h1 {
-      color: #00ffcc;
-      font-size: 1.5em;
-      margin-bottom: 20px;
-      text-shadow: 0 0 10px #00ffcc;
+      font-size: 4em;
+      letter-spacing: 2px;
+      color: #00eaff;
+      text-shadow: 0 0 20px #00eaff, 0 0 40px #007bff, 0 0 80px #00c6ff;
+      animation: titleGlow 3s ease-in-out infinite alternate;
+      z-index: 2;
     }
 
-    pre {
-      font-size: 1.1em;
-      line-height: 1.6;
-      white-space: pre-wrap;
-      word-break: break-word;
+    @keyframes titleGlow {
+      0% {
+        text-shadow: 0 0 20px #00eaff, 0 0 40px #007bff;
+      }
+      100% {
+        text-shadow: 0 0 40px #00fff2, 0 0 80px #00baff;
+      }
     }
 
-    /* -------- BLINKING CURSOR -------- */
-    .cursor {
-      display: inline-block;
-      width: 10px;
-      height: 20px;
-      background: #00ff99;
-      margin-left: 5px;
-      animation: blink 1s step-start infinite;
-    }
-
-    @keyframes blink {
-      50% { opacity: 0; }
-    }
-
-    /* -------- TYPING EFFECT -------- */
-    .typing {
-      overflow: hidden;
-      white-space: nowrap;
-      border-right: 2px solid #00ff99;
-      width: 0;
-      animation: typing 3.5s steps(40, end) forwards, blink 0.8s infinite;
-    }
-
-    @keyframes typing {
-      from { width: 0; }
-      to { width: 100%; }
-    }
-
-    /* -------- BUTTON (COMMAND STYLE) -------- */
-    .btn {
-      display: inline-block;
+    /* ==== Message Box ==== */
+    p {
+      font-size: 1.3em;
       margin-top: 25px;
-      padding: 8px 18px;
-      color: #000;
-      background: #00ff99;
+      padding: 15px 25px;
+      color: #b8ffff;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+      animation: fadeIn 2s ease;
+      z-index: 2;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ==== Floating Neon Button ==== */
+    .btn {
+      margin-top: 40px;
+      padding: 15px 45px;
+      background: linear-gradient(90deg, #00eaff, #007bff, #00eaff);
+      background-size: 300%;
+      color: white;
+      font-size: 1.2em;
+      font-weight: 600;
       border: none;
-      border-radius: 4px;
-      font-weight: bold;
+      border-radius: 35px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+      transition: all 0.4s ease;
+      z-index: 2;
+      animation: glowShift 6s linear infinite;
     }
 
     .btn:hover {
-      background: #00ffaa;
-      transform: scale(1.05);
+      transform: scale(1.1);
+      box-shadow: 0 0 50px #00ffff;
     }
 
-    /* -------- FADE IN -------- */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes glowShift {
+      0% {
+        background-position: 0%;
+      }
+      100% {
+        background-position: 100%;
+      }
     }
+
+    /* ==== Stars ==== */
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 3s infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0%, 100% {
+        opacity: 0.2;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.3);
+      }
+    }
+
+    /* Create multiple stars with different sizes and positions */
+    .star:nth-child(1) { top: 10%; left: 15%; width: 2px; height: 2px; animation-delay: 0s; }
+    .star:nth-child(2) { top: 30%; left: 70%; width: 3px; height: 3px; animation-delay: 1s; }
+    .star:nth-child(3) { top: 50%; left: 40%; width: 2px; height: 2px; animation-delay: 0.5s; }
+    .star:nth-child(4) { top: 80%; left: 80%; width: 4px; height: 4px; animation-delay: 1.5s; }
+    .star:nth-child(5) { top: 20%; left: 85%; width: 1.5px; height: 1.5px; animation-delay: 0.8s; }
+
   </style>
 </head>
 <body>
-  <div class="terminal">
-    <h1>> Flask Universe CLI v1.0</h1>
-    <pre class="typing">
-$ initializing Flask environment...
-$ loading extensions... done
-$ connecting to {{ message or 'Flask core modules' }} ...
-$ status: ONLINE
-$ welcome to Flask Universe 🚀
-    </pre>
-    <button class="btn" onclick="alert('Launching Flask Explorer...')">Run Command</button>
-  </div>
+  <div class="aurora"></div>
+
+  <!-- Stars -->
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+
+  <h1>🚀 Flask Universe</h1>
+  <p>{{ message }}</p>
+  <button class="btn" onclick="alert('🌠 Launching into the Flask Cosmos!')">Enter Universe</button>
 </body>
 </html>
