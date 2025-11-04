@@ -244,10 +244,22 @@ ingress:
 ```
 write the necessary changes and testing using helm upgrade using
 ```bash
-helm upgrade --install flaskapp ./flaskapp -n flask
+kubectl create namespace flaskapp
+helm upgrade --install flaskapp ./flaskapp -n flaskapp
 ```
 then push the helm chart to you github repo.
----
+
+## Step 8: Configure Ingress Controller
+
+Install NGINX Ingress Controller (if not installed):
+```bash
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+```
+Map your domain (e.g., flask.mayaworld.tech) to the External IP of your ingress:
+```bash
+kubectl get ingress -n flaskapp
+```
+Then update your DNS A record in your domain panel.
 
 
 
