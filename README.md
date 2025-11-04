@@ -106,7 +106,64 @@ Authenticate Docker with Artifact Registry:
 ```bash
 gcloud auth configure-docker us-west1-docker.pkg.dev
 ````
-## ⚙️ Step 5: Create the cloudbuild.yaml
+
+## Step 4: Create GKE Cluster
+```bash
+gcloud container clusters create-auto autopilot-cluster1 \
+  --region=us-west1
+```
+<img width="1455" height="231" alt="image" src="https://github.com/user-attachments/assets/c67e1271-97a4-4aa6-8eb8-8e85acc2d9fe" />
+
+now connect this cluster
+```bash
+gcloud container clusters get-credentials autopilot-cluster1 --region us-west1
+```
+
+## Step 5: Set Up Cloud Build Trigger
+
+1. Go to **Cloud Build → Triggers → Create Trigger**  
+2. Select your **GitHub repository** (connect via OAuth if not already connected).  
+3. Choose **Branch:** `main`
+
+<img width="1436" height="161" alt="image" src="https://github.com/user-attachments/assets/a663608c-356c-4e4d-bc34-c291951836a4" />
+
+
+## Step 6: 🔐  Create the Personal Access Token (PAT) of Github and Secret to autoupdate the image tag
+
+### 🧩 a)  Create the PAT in GitHub
+
+1. Go to **GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens** (or “classic” if needed).  
+2. Click **“Generate new token”**  
+3. Give it a name (e.g., `cloudbuild-auto`)  
+4. Select scopes/permissions:  
+   - ✅ `repo` (full access to read/write)  
+   - ✅ `workflow` (optional if you have GitHub Actions)  
+5. **Copy the generated token** — you’ll only see it once.
+
+---
+
+### 🗝️ b)  Store it in Google Secret Manager
+
+You’ll use this in your Cloud Build pipeline.
+
+```bash
+gcloud secrets create GITHUB_TOKEN --replication-policy="automatic"
+```
+Then add the token value:
+```bash
+echo "YOUR_GITHUB_PAT_HERE" | gcloud secrets versions add GITHUB_TOKEN --data-file=-
+```
+
+### 🔒 c)  Grant Cloud Build Access to the Secret
+```bash
+gcloud secrets add-iam-policy-binding GITHUB_TOKEN \
+  --member="serviceAccount:${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com" \
+  --role="roles/secretmanager.secretAccessor"
+```
+This allows Cloud Build to securely read the token at build time.
+
+### 🧱 d) Reference It Inside Your cloudbuild.yaml
+
 ```yaml
 
 steps:
@@ -150,3 +207,4 @@ images:
 options:
   logging: CLOUD_LOGGING_ONLY
 ```
+
