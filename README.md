@@ -122,8 +122,18 @@ gcloud container clusters get-credentials autopilot-cluster1 --region us-west1
 ## Step 5: Set Up Cloud Build Trigger
 
 1. Go to **Cloud Build → Triggers → Create Trigger**  
-2. Select your **GitHub repository** (connect via OAuth if not already connected).  
-3. Choose **Branch:** `main`
+2. **Name:** `flaskapp-build`  
+3. **Source Repository:** Connect to your GitHub repo.  
+4. **Branch:** `main`  
+5. **Trigger Type:** “Push to branch”  
+6. **Build Configuration:** `cloudbuild.yaml`  
+7. **Substitution Variable:**  
+   - `_GITHUB_TOKEN = your GitHub Personal Access Token (stored in Secret Manager)`  
+8. **Include/Exclude Filters:**  
+   - **Include:** All files  
+   - **Exclude:** `deployment.yaml`, `values.yaml`  
+
+🧠 This ensures the build trigger runs only when app code changes, not when manifest updates happen.
 
 <img width="1436" height="161" alt="image" src="https://github.com/user-attachments/assets/a663608c-356c-4e4d-bc34-c291951836a4" />
 
@@ -207,4 +217,37 @@ images:
 options:
   logging: CLOUD_LOGGING_ONLY
 ```
+
+## Step 7: Create the helm chart
+flaskapp/values.yaml
+```yaml
+replicaCount: 1
+
+image:
+  repository: us-west1-docker.pkg.dev/testing-474407/my-repo/mayaworld13
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 5000
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: flask.mayaworld.tech
+      paths:
+        - path: /
+          pathType: Prefix
+```
+write the necessary changes and testing using helm upgrade using
+```bash
+helm upgrade --install flaskapp ./flaskapp -n flask
+```
+then push the helm chart to you github repo.
+---
+
+
 
