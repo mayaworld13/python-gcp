@@ -28,4 +28,5 @@ Main flow:
 ---
 
 ## 📁 Repo structure
+<img width="245" height="306" alt="image" src="https://github.com/user-attachments/assets/60d2def0-ea6e-4448-a8cf-fbcabd5c2354" />
 
