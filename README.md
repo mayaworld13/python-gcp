@@ -261,5 +261,72 @@ kubectl get ingress -n flaskapp
 ```
 Then update your DNS A record in your domain panel.
 
+## Step 9: ☸️ Argo CD (GitOps) - UI Steps (Simple)
+
+### 🧩 Install Argo CD in Your Cluster
+
+```bash
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+### 🌐 Expose Argo CD (for Testing)
+
+```bash
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+kubectl get svc -n argocd
+```
+### 🔑 Open Argo CD UI and Login
+
+Access the Argo CD UI at:
+
+```bash
+https://<ARGOCD_EXTERNAL_IP>
+```
+
+### Get the initial admin password:
+```bash
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+```
+
+<img width="891" height="491" alt="image" src="https://github.com/user-attachments/assets/5c15bdee-e74d-44a1-bf28-bbe23463db77" />
+
+Click Create 
+
+### 🔔 Add GitHub Webhook to Notify Argo CD
+1. Go to GitHub → Settings → Webhooks → Add webhook
+2. Payload URL:
+   ```bash
+    http://<ARGOCD_EXTERNAL_IP>/api/webhook
+   ```
+3. Content type: application/json
+4. Events: Just the push event
+5. Click Add webhook
+
+## 🧩 Troubleshooting Guide
+
+| **Issue** | **Cause** | **Solution** |
+|------------|------------|---------------|
+| **1️⃣ ImagePullBackOff Error** | The image tag referenced in `values.yaml` or `deployment.yaml` does not exist in Artifact Registry (old or incorrect image). | ✅ Ensure the Cloud Build successfully pushes the latest image to Artifact Registry.<br>✅ Verify the image tag in `values.yaml` matches the latest pushed tag.<br>✅ You can check with:<br>`gcloud artifacts docker images list <repo-name>` |
+| **2️⃣ Ingress Conflict Error** | Error: `host "flask.mayaworld.tech" and path "/" is already defined in ingress flaskapp/flaskapp` — happens when two Ingress resources use the same hostname. | ✅ Run `kubectl get ingress -A` to list all Ingresses.<br>✅ Delete the duplicate one: `kubectl delete ingress <name> -n <namespace>`.<br>✅ Keep only one Ingress with the correct domain. |
+| **3️⃣ Auto Sync Fails in ArgoCD (OutOfSync / Missing Health)** | ArgoCD cannot sync resources because of webhook validation or previously failed Ingress creation. | ✅ Delete the failed Ingress using: `kubectl delete ingress <name> -n <namespace>`.<br>✅ Wait for ArgoCD to reapply automatically.<br>✅ Check ArgoCD UI → App → Events for specific error. |
+| **4️⃣ Cloud Build Trigger Not Running** | The trigger is not configured to run on specific file changes or branch pushes. | ✅ In Cloud Build trigger configuration, make sure the trigger type is **"Push to a branch"** and branch regex is `^main$`.<br>✅ Add included files filter to exclude certain files if needed.<br>⚠️ If you don’t want trigger to run for `deployment.yaml` or `values.yaml` commits, use an **ignore file filter**. |
+| **5️⃣ GitHub Push Rejected (fetch first)** | Local repo not synced with GitHub remote. | ✅ Run:<br>`git pull origin main --rebase`<br>Then push again:<br>`git push origin main` |
+| **6️⃣ ArgoCD Sync Shows “Missing” App Health** | Happens when the image or manifest update is in progress or Ingress is invalid. | ✅ Wait for sync to complete.<br>✅ Check `kubectl describe ingress -n <namespace>` for events.<br>✅ Ensure Helm chart values are consistent with deployment. |
+| **7️⃣ Web App Not Accessible Externally** | Ingress or DNS misconfiguration, or service type not exposed. | ✅ Verify DNS: `dig flask.mayaworld.tech`.<br>✅ Check Ingress IP: `kubectl get ingress -n flaskapp`.<br>✅ Ensure Cloud DNS A record points to that IP. |
+| **8️⃣ ArgoCD Not Auto Syncing After Image Update** | Webhook between GitHub → ArgoCD missing or misconfigured. | ✅ Add GitHub Webhook pointing to ArgoCD’s API URL (usually `https://argocd.yourdomain/api/webhook`).<br>✅ Use `Content-type: application/json`.<br>✅ Enable Auto-Sync in ArgoCD Application settings. |
+| **9️⃣ Artifact Registry Image Not Found** | Image not built or uploaded correctly from Cloud Build. | ✅ Check Cloud Build logs.<br>✅ Verify image in Artifact Registry:<br>`gcloud artifacts docker images list LOCATION-docker.pkg.dev/PROJECT_ID/REPO_NAME`.<br>✅ Update tag in `values.yaml`. |
+| **🔟 Service Not Working Even After Deployment** | Service or deployment mismatch in Helm chart (wrong labels or selectors). | ✅ Ensure `selector` in Service matches `labels` in Deployment.<br>✅ Example:<br>```yaml<br>selector:<br>  app: flaskapp<br>``` matches ```yaml<br>metadata:<br>  labels:<br>    app: flaskapp<br>``` |
+
+---
+
+✅ **Pro Tips:**
+- Always verify each new build pushed to Artifact Registry is reflected in Helm’s `values.yaml`.
+- Keep only one Ingress per hostname to avoid webhook rejections.
+- Use `kubectl get events -n flaskapp` for real-time debugging.
+- Enable “Auto Sync” in ArgoCD for continuous deployment after Cloud Build updates.
+- Avoid triggering Cloud Build on infra-related files like `values.yaml` or `deployment.yaml` using file filters.
+
+
+
 
 
