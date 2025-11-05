@@ -98,14 +98,17 @@ CMD ["python", "app.py"]
 ## 🏢 Step 3: Create Artifact Registry
 
 1. Go to **Google Cloud Console → Artifact Registry → Repositories → Create Repository**  
-2. **Name:** `flask-repo`  
+2. **Name:** `my-repo`  
 3. **Format:** `Docker`  
 4. **Location:** Region of your choice (e.g., `us-west1`)  
+<img width="1595" height="463" alt="image" src="https://github.com/user-attachments/assets/5620b653-8463-4075-9661-d89833148322" />
 
 Authenticate Docker with Artifact Registry:  
 ```bash
 gcloud auth configure-docker us-west1-docker.pkg.dev
 ````
+
+
 
 ## Step 4: Create GKE Cluster
 ```bash
@@ -122,16 +125,16 @@ gcloud container clusters get-credentials autopilot-cluster1 --region us-west1
 ## Step 5: Set Up Cloud Build Trigger
 
 1. Go to **Cloud Build → Triggers → Create Trigger**  
-2. **Name:** `flaskapp-build`  
+2. **Name:** `mytest`  
 3. **Source Repository:** Connect to your GitHub repo.  
 4. **Branch:** `main`  
 5. **Trigger Type:** “Push to branch”  
 6. **Build Configuration:** `cloudbuild.yaml`  
 7. **Substitution Variable:**  
-   - `_GITHUB_TOKEN = your GitHub Personal Access Token (stored in Secret Manager)`  
+   - `GITHUB_TOKEN = your GitHub Personal Access Token (stored in Secret Manager)`  
 8. **Include/Exclude Filters:**  
    - **Include:** All files  
-   - **Exclude:** `deployment.yaml`, `values.yaml`  
+   - **Exclude:** `deployment.yaml`, `values.yaml`, `README.MD`
 
 🧠 This ensures the build trigger runs only when app code changes, not when manifest updates happen.
 
@@ -261,7 +264,7 @@ kubectl get ingress -n flaskapp
 ```
 Then update your DNS A record in your domain panel.
 
-## Step 9: ☸️ Argo CD (GitOps) - UI Steps (Simple)
+## Step 9: ☸️ Argo CD (GitOps)
 
 ### 🧩 Install Argo CD in Your Cluster
 
@@ -301,6 +304,17 @@ Click Create
 3. Content type: application/json
 4. Events: Just the push event
 5. Click Add webhook
+   
+<img width="1182" height="412" alt="image" src="https://github.com/user-attachments/assets/8fa2f3aa-143d-4f9b-a8d9-1e30476e367d" />
+
+
+## Result:
+<img width="845" height="626" alt="image" src="https://github.com/user-attachments/assets/4ec11d06-9c42-4d0a-8254-84d29467019a" />
+
+<img width="1634" height="855" alt="image" src="https://github.com/user-attachments/assets/543254e8-5a9c-498b-a37e-9de1c5d3a9c9" />
+<img width="1541" height="840" alt="image" src="https://github.com/user-attachments/assets/346347b8-702e-4c95-9b23-bc8f7229f554" />
+
+
 
 ## 🧩 Troubleshooting Guide
 
