@@ -32,7 +32,7 @@ steps:
         git commit -m "Auto-update Helm image tag to $SHORT_SHA"
         git push https://mayaworld13:$(gcloud secrets versions access latest --secret=GITHUB_TOKEN)@github.com/mayaworld13/python-gcp.git HEAD:main
         
-  - name: 'gcr.io/cloud-builders/helm'
+  - name: 'alpine/helm:3.14.0'
     entrypoint: bash
     args:
       - -c
@@ -40,7 +40,7 @@ steps:
         echo "Deploying Helm chart..."
         helm upgrade --install flaskapp ./flaskapp \
           --namespace flaskapp \
-          --create-namespace \
+          --create-namespace 
           
 
    
