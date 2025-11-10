@@ -29,7 +29,7 @@ steps:
     args:
       - '-c'
       - |
-        gcloud container clusters get-credentials autopilot-cluster \
+        gcloud container clusters get-credentials flask-cluster  \
           --region=us-central1 \
           --project=$PROJECT_ID
   - name: 'alpine/helm:3.12.0'
