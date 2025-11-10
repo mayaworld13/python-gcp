@@ -1,0 +1,45 @@
+steps:
+  # 1️⃣ Build Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/flask-repo/mayaworld13:$SHORT_SHA', '.']
+
+  # 2️⃣ Push image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/flask-repo/mayaworld13:$SHORT_SHA']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        echo "Updating image tag in values.yaml..."
+        sed -i "s#tag: .*#tag: \"$SHORT_SHA\"#g" flaskapp/values.yaml 
+        sed -i "s#image: .*#image: us-central1-docker.pkg.dev/$PROJECT_ID/flask-repo/mayaworld13:$SHORT_SHA#g" deployment.yaml
+
+        git config --global user.email "cloudbuild@google.com"
+        git config --global user.name "Cloud Build"
+
+        git add flaskapp/values.yaml deployment.yaml
+        git commit -m "Auto-update Helm image tag to $SHORT_SHA"
+        git push https://mayaworld13:$(gcloud secrets versions access latest --secret=GITHUB_TOKEN)@github.com/mayaworld13/python-gcp.git HEAD:main
+    
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud container clusters get-credentials autopilot-cluster \
+          --region=us-central1 \
+          --project=$PROJECT_ID
+  - name: 'alpine/helm:3.12.0'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        helm upgrade --install flaskapp ./flaskapp
+images:
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/flask-repo/mayaworld13:$SHORT_SHA'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
