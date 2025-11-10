@@ -52,7 +52,7 @@
 # images:
 #   - 'us-west1-docker.pkg.dev/$PROJECT_ID/my-repo/mayaworld13:$COMMIT_SHA'
 
-# #  Fix for logging / service account error
+#  Fix for logging / service account error
 # options:
 #   logging: CLOUD_LOGGING_ONLY
 
