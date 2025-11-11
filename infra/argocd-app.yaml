@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flaskapp
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mayaworld13/python-gcp.git
+    targetRevision: main
+    path: flaskapp
+    helm:
+      releaseName: flaskapp
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flaskapp   # 👈 App deployed to flaskapp namespace
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

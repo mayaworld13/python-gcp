@@ -1,0 +1,10 @@
+project_id    = "testing-474407"
+region        = "us-central1"
+artifact_repo = "flask-repo"
+connection_name = "my-connection"
+app_installation_id = 89990902
+oauth_token_secret_version = "projects/testing-474407/secrets/GITHUB_TOKEN/versions/latest"
+google_cloudbuildv2_repository = "python-gcp"
+remote_uri = "https://github.com/mayaworld13/python-gcp.git"
+trigger_name = "flaskapp-trigger"
+gke-cluster_name = "flask-cluster"
