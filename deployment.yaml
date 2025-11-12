@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: mayaworld13
-        image: us-central1-docker.pkg.dev/testing-474407/flask-repo/mayaworld13:f42314a
+        image: us-central1-docker.pkg.dev/testing-474407/flask-repo/mayaworld13:493129e
         ports:
         - containerPort: 5000
 ---
